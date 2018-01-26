@@ -1,8 +1,6 @@
 <?php
-// Forked from https://gist.github.com/1809044
-// Available from https://gist.github.com/nichtich/5290675#file-deploy-php
-$TITLE   = 'Git Deployment Hamster';
-$VERSION = '0.11';
+$TITLE   = 'Git Deploy';
+
 echo <<<EOT
 <!DOCTYPE HTML>
 <html lang="en-US">
@@ -10,13 +8,9 @@ echo <<<EOT
 	<meta charset="UTF-8">
 	<title>$TITLE</title>
 </head>
-<body style="background-color: #000000; color: #FFFFFF; font-weight: bold; padding: 0 10px;">
-<pre>
-  o-o    $TITLE
- /\\"/\   v$VERSION
-(`=*=') 
- ^---^`-.
+<body style="font-weight: bold; padding: 0 10px;">
 EOT;
+
 // Check whether client is allowed to trigger an update
 $allowed_ips = array(
 	'207.97.227.', '50.57.128.', '108.171.174.', '50.57.231.', '204.232.175.', '192.30.252.', // GitHub
@@ -30,33 +24,30 @@ if (@$headers["X-Forwarded-For"]) {
 } else {
     $ip = $_SERVER['REMOTE_ADDR'];
 }
+
 foreach ($allowed_ips as $allow) {
     if (stripos($ip, $allow) !== false) {
         $allowed = true;
         break;
     }
 }
-//if (!$allowed) {
-if(false)
+if (!$allowed) {
 	header('HTTP/1.1 403 Forbidden');
- 	echo "<span style=\"color: #ff0000\">Sorry, no hamster - better convince your parents!</span>\n";
+ 	echo "<span style=\"color: #000000\">You shall not pass!</span>\n";
     echo "</pre>\n</body>\n</html>";
     exit;
 }
 flush();
+
 // Actually run the update
-$commands = array(
-	'echo $PWD',
-	'whoami',
+$commands = array(	
 	'git pull',
-	'git status',
-	'git submodule sync',
-	'git submodule update',
-	'git submodule status',
-    'test -e /usr/share/update-notifier/notify-reboot-required && echo "system restart required"',
+	'git status'	
 );
+
 $output = "\n";
 $log = "####### ".date('Y-m-d H:i:s'). " #######\n";
+
 foreach($commands AS $command){
     // Run it
     $tmp = shell_exec("$command 2>&1");
