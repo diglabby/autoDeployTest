@@ -24,7 +24,7 @@ if (@$headers["X-Forwarded-For"]) {
 } else {
     $ip = $_SERVER['REMOTE_ADDR'];
 }
-
+echo $ip;
 foreach ($allowed_ips as $allow) {
     if (stripos($ip, $allow) !== false) {
         $allowed = true;
@@ -41,8 +41,9 @@ flush();
 
 // Actually run the update
 $commands = array(	
-	'git pull',
-	'git status'	
+'git fetch --all',
+'git reset --hard origin/master',
+'git pull origin master',
 );
 
 $output = "\n";
